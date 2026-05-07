@@ -34,8 +34,6 @@ exports.getAvailableSlots = async (req, res) => {
 exports.bookAppointment = async (req, res) => {
 try {
     const { slotId } = req.params;
-
-    // Use req.user (standard) instead of res.req.user
     if (req.user.role !== "user") {
       return res.status(403).json({
         success: false,
@@ -55,12 +53,11 @@ try {
       });
     }
 
-    // FIX: Include appointmentTime by using the slot's date
     const appointment = await Appointment.create({
       slot: slot._id,
       user: req.user.id,
       provider: slot.provider,
-      appointmentTime: slot.date // This satisfies the 'required' constraint
+      appointmentTime: slot.date
     });
 
     slot.isBooked = true;
