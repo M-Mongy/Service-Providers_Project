@@ -15,4 +15,7 @@ setupSwagger(app);
 const authRoutes = require("./routes/authRoutes");
 app.use("/api/auth", authRoutes);
 
+const slotRoutes = require("./routes/slotRoutes");
+app.use("/api/slots", slotRoutes);
+
 module.exports = app;
