@@ -18,4 +18,7 @@ app.use("/api/auth", authRoutes);
 const slotRoutes = require("./routes/slotRoutes");
 app.use("/api/slots", slotRoutes);
 
+const appointmentRoutes = require("./routes/appointmentRoutes");
+app.use("/api/appointments", appointmentRoutes);
+
 module.exports = app;
