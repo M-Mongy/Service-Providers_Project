@@ -1,5 +1,5 @@
 const Joi = require('joi');
-Joi.objectId = require('joi-objectid')(Joi); // You may need to npm install joi-objectid
+Joi.objectId = require('joi-objectid')(Joi);
 
 const appointmentIdSchema = Joi.object({
   appointmentId: Joi.string().hex().length(24).required()
