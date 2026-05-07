@@ -7,8 +7,6 @@ const startReminderJob = () => {
     // every minute
     cron.schedule("* * * * *", async () => {
         try {
-            console.log("Checking appointments...");
-
             const appointments = await Appointment.find({
                 status: "upcoming",
                 reminderSent: false,
@@ -24,14 +22,8 @@ const startReminderJob = () => {
                     `${appointment.slot.date.toISOString().split("T")[0]}T${appointment.slot.startTime}:00`
                 );
 
-                console.log("Now:", now);
-                console.log("Appointment time:", appointment.appointmentTime);
-                console.log("Reminder sent:", appointment.reminderSent);
-
                 const diffInMinutes =
                     (appointment.appointmentTime - now) / (1000 * 60);
-
-                console.log("Difference:", diffInMinutes);
 
                 // send if between 29-30 minutes
                 if (diffInMinutes <= 30 && diffInMinutes > 0 && !appointment.reminderSent) {
