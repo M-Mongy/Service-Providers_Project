@@ -11,6 +11,9 @@ connectDB();
 const setupSwagger = require("./config/swagger");
 setupSwagger(app);
 
+const startReminderJob = require("./jobs/reminderJob");
+startReminderJob();
+
 //auth routes
 const authRoutes = require("./routes/authRoutes");
 app.use("/api/auth", authRoutes);
