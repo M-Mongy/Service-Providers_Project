@@ -136,14 +136,26 @@ router.get("/my", protect, allowRoles("provider"), getMySlots);
  * @swagger
  * /api/slots/available:
  *   get:
- *     summary: Get all available (unbooked) slots
+ *     summary: Get all available slots
+ *     description: Retrieve slots that are not booked. Can optionally filter by a specific provider.
  *     tags: [Slots]
  *     security:
  *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: provider
+ *         schema:
+ *           type: string
+ *         required: false
+ *         description: The ID of the provider to filter slots by
  *     responses:
  *       200:
  *         description: List of available slots
+ *       400:
+ *         description: Invalid Provider ID
+ *       401:
+ *         description: Not authorized
  */
-router.get("/available", protect, getAvailableSlots);
+router.get("/available", getAvailableSlots);
 
 module.exports = router;

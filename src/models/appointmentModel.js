@@ -20,6 +20,15 @@ const appointmentSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
+    appointmentTime: {
+      type: Date,
+      required: true
+    },
+
+    reminderSent: {
+      type: Boolean,
+      default: false
+    },
 
     status: {
       type: String,

@@ -1,4 +1,6 @@
 const Slot = require("../models/slotModel");
+const mongoose = require("mongoose");
+
 
 const createSlot = async (req, res) => {
   try {
@@ -64,11 +66,24 @@ const updateSlot = async (req, res) => {
 
 const getAvailableSlots = async (req, res) => {
   try {
-    const slots = await Slot.find({ isBooked: false }).populate("provider");
+    const query = { isBooked: false };
 
-    res.json(slots);
+    if (req.query.provider) {
+      if (!mongoose.Types.ObjectId.isValid(req.query.provider)) {
+        return res.status(400).json({ success: false, message: "Invalid Provider ID" });
+      }
+      query.provider = req.query.provider;
+    }
+    
+    const slots = await Slot.find(query).populate("provider", "name email");
+
+    res.status(200).json({
+      success: true,
+      count: slots.length,
+      data: slots
+    });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ success: false, error: err.message });
   }
 };
 
