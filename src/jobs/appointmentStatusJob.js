@@ -25,7 +25,6 @@ const startAppointmentStatusJob = () => {
         }
       );
 
-      console.log(`Expired updated: ${expired.modifiedCount}`);
     } catch (err) {
       console.log("Cron error:", err.message);
     }

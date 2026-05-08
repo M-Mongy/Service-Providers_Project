@@ -1,11 +1,22 @@
 const User = require("./../models/userModel");
 const bcrypt = require("bcryptjs");
 const generateToken = require("../utils/generateToken");
+const { signupSchema, loginSchema } = require("../validations/authValidator");
 
 
 //sign up controller
 const signup = async (req, res) => {
   try {
+    
+    // validate input
+    const { error, value } = signupSchema.validate(req.body);
+
+    if (error) {
+      return res.status(400).json({
+        message: error.details[0].message,
+      });
+    }
+;
     const { name, email, password, role } = req.body;
 
     // check existing user
