@@ -66,39 +66,15 @@ const updateSlot = async (req, res) => {
 };
 
 
-
-
-const getAvailableSlots = async (req, res) => {
-  try {
-    const query = { isBooked: false };
-
-    if (req.query.provider) {
-      if (!mongoose.Types.ObjectId.isValid(req.query.provider)) {
-        return res.status(400).json({ success: false, message: "Invalid Provider ID" });
-      }
-      query.provider = req.query.provider;
-    }
-    
-    const slots = await Slot.find(query).populate("provider", "name email");
-
-    res.status(200).json({
-      success: true,
-      count: slots.length,
-      data: slots
-    });
-  } catch (err) {
-    res.status(500).json({ success: false, error: err.message });
-  }
-};
-
-
-
-
 const getMySlots = async (req, res) => {
   try {
-    const providerId = req.user.id;
+    if (!req.user) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
 
-    const slots = await Slot.find({ provider: providerId });
+    const slots = await Slot.find({
+      provider: req.user.id,
+    });
 
     res.json(slots);
   } catch (err) {
@@ -106,7 +82,7 @@ const getMySlots = async (req, res) => {
   }
 };
 
-
+//delete slot by id, only if it belongs to the provider
 const deleteSlot = async (req, res) => {
   try {
     const slotId = req.params.id;
@@ -135,6 +111,5 @@ module.exports = {
   createSlot,
   updateSlot,
   deleteSlot,
-  getAvailableSlots,
   getMySlots,
 };
