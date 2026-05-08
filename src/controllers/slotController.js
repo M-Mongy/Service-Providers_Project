@@ -82,7 +82,7 @@ const getMySlots = async (req, res) => {
   }
 };
 
-
+//delete slot by id, only if it belongs to the provider
 const deleteSlot = async (req, res) => {
   try {
     const slotId = req.params.id;
