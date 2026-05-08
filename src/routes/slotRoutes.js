@@ -6,7 +6,6 @@ const {
   updateSlot,
   deleteSlot,
   getMySlots,
-  getAvailableSlots,
 } = require("../controllers/slotController");
 
 const protect = require("../middleware/authMiddleware").protect;
@@ -92,13 +91,5 @@ router.delete("/:id", protect, authorize("provider"), deleteSlot);
  */
 router.get("/my", protect, authorize("provider"), getMySlots);
 
-/**
- * @swagger
- * /api/slots/available:
- *   get:
- *     summary: Get available slots
- *     tags: [Slots]
- */
-router.get("/available", getAvailableSlots);
 
 module.exports = router;

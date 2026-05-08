@@ -16,13 +16,54 @@ exports.getAvailableSlots = async (req, res) => {
       filter.provider = req.query.provider;
     }
 
-    const slots = await Slot.find(filter).populate(
-      "provider",
-      "name email"
-    );
+    const slots = await Slot.aggregate([
+      { $match: filter },
 
-    return sendSuccess(res, 200, slots, "Slots fetched successfully");
+      {
+        $lookup: {
+          from: "users",
+          localField: "provider",
+          foreignField: "_id",
+          as: "provider",
+        },
+      },
 
+      { $unwind: "$provider" },
+
+      {
+        $group: {
+          _id: "$provider._id",
+
+          provider: {
+            $first: {
+              _id: "$provider._id",
+              name: "$provider.name",
+              email: "$provider.email",
+            },
+          },
+
+          slots: {
+            $push: {
+              _id: "$_id",
+              date: "$date",
+              startTime: "$startTime",
+              endTime: "$endTime",
+              duration: "$duration",
+            },
+          },
+        },
+      },
+
+      {
+        $project: {
+          _id: 0,
+          provider: 1,
+          slots: 1,
+        },
+      },
+    ]);
+
+    return sendSuccess(res, 200, slots, "Slots grouped by provider");
   } catch (error) {
     return sendError(res, 500, error.message);
   }
