@@ -1,12 +1,18 @@
 const Slot = require("../models/slotModel");
 const mongoose = require("mongoose");
 
+const {createSlotSchema,updateSlotSchema,} = require("../validations/slotValidator");
 
 const createSlot = async (req, res) => {
   try {
-    if (!req.user || req.user.role !== "provider") {
-      return res.status(403).json({ error: "Access denied. Providers only." });
+    const { error, value } = createSlotSchema.validate(req.body);
+
+    if (error) {
+      return res.status(400).json({
+        message: error.details[0].message,
+      });
     }
+    
     const providerId = req.user.id;
 
     const slot = await Slot.create({
@@ -29,9 +35,7 @@ const createSlot = async (req, res) => {
 
 const updateSlot = async (req, res) => {
   try {
-    if (!req.user || req.user.role !== "provider") {
-      return res.status(403).json({ error: "Access denied. Providers only." });
-    }
+
     const slotId = req.params.id;
 
     const slot = await Slot.findById(slotId);
@@ -92,9 +96,6 @@ const getAvailableSlots = async (req, res) => {
 
 const getMySlots = async (req, res) => {
   try {
-    if (!req.user || req.user.role !== "provider") {
-      return res.status(403).json({ error: "Access denied. Providers only." });
-    }
     const providerId = req.user.id;
 
     const slots = await Slot.find({ provider: providerId });
@@ -108,9 +109,6 @@ const getMySlots = async (req, res) => {
 
 const deleteSlot = async (req, res) => {
   try {
-    if (!req.user || req.user.role !== "provider") {
-      return res.status(403).json({ error: "Access denied. Providers only." });
-    }
     const slotId = req.params.id;
 
     const slot = await Slot.findById(slotId);

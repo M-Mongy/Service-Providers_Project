@@ -10,7 +10,7 @@ const {
 } = require("../controllers/slotController");
 
 const protect = require("../middleware/authMiddleware").protect;
-const allowRoles = require("../middleware/roleMiddleware");
+const authorize = require("../middleware/providerAuthorize");
 
 /**
  * @swagger
@@ -18,6 +18,7 @@ const allowRoles = require("../middleware/roleMiddleware");
  *   name: Slots
  *   description: Slot management for providers and users
  */
+
 
 /**
  * @swagger
@@ -42,7 +43,7 @@ const allowRoles = require("../middleware/roleMiddleware");
  *               date:
  *                 type: string
  *                 format: date
- *                 example: "2023-12-01"
+ *                 example: "2026-05-10"
  *               startTime:
  *                 type: string
  *                 example: "09:00"
@@ -55,47 +56,19 @@ const allowRoles = require("../middleware/roleMiddleware");
  *     responses:
  *       201:
  *         description: Slot created successfully
- *       401:
- *         description: Not authorized
  */
-router.post("/", protect, allowRoles("provider"), createSlot);
+router.post("/", protect, authorize("provider"), createSlot);
 
 /**
  * @swagger
  * /api/slots/{id}:
  *   put:
- *     summary: Update an existing slot
+ *     summary: Update a slot
  *     tags: [Slots]
  *     security:
  *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *         description: The slot ID
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               date:
- *                 type: string
- *                 format: date
- *               startTime:
- *                 type: string
- *               endTime:
- *                 type: string
- *               duration:
- *                 type: number
- *     responses:
- *       200:
- *         description: Slot updated successfully
  */
-router.put("/:id", protect, allowRoles("provider"), updateSlot);
+router.put("/:id", protect, authorize("provider"), updateSlot);
 
 /**
  * @swagger
@@ -105,56 +78,26 @@ router.put("/:id", protect, allowRoles("provider"), updateSlot);
  *     tags: [Slots]
  *     security:
  *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *         description: The slot ID
- *     responses:
- *       200:
- *         description: Slot deleted successfully
  */
-router.delete("/:id", protect, allowRoles("provider"), deleteSlot);
+router.delete("/:id", protect, authorize("provider"), deleteSlot);
 
 /**
  * @swagger
  * /api/slots/my:
  *   get:
- *     summary: Get all slots created by the logged-in provider
+ *     summary: Get provider slots
  *     tags: [Slots]
  *     security:
  *       - bearerAuth: []
- *     responses:
- *       200:
- *         description: List of provider slots
  */
-router.get("/my", protect, allowRoles("provider"), getMySlots);
+router.get("/my", protect, authorize("provider"), getMySlots);
 
 /**
  * @swagger
  * /api/slots/available:
  *   get:
- *     summary: Get all available slots
- *     description: Retrieve slots that are not booked. Can optionally filter by a specific provider.
+ *     summary: Get available slots
  *     tags: [Slots]
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: query
- *         name: provider
- *         schema:
- *           type: string
- *         required: false
- *         description: The ID of the provider to filter slots by
- *     responses:
- *       200:
- *         description: List of available slots
- *       400:
- *         description: Invalid Provider ID
- *       401:
- *         description: Not authorized
  */
 router.get("/available", getAvailableSlots);
 

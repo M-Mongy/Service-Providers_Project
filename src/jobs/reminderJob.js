@@ -4,6 +4,7 @@ const Appointment = require("../models/appointmentModel");
 const sendReminderEmail = require("../services/sendReminderEmail");
 
 const startReminderJob = () => {
+    
     // every minute
     cron.schedule("* * * * *", async () => {
         try {
@@ -36,11 +37,8 @@ const startReminderJob = () => {
                     appointment.reminderSent = true;
 
                     await appointment.save();
-
-                    console.log(
-                        `Reminder sent to ${appointment.user.email}`
-                    );
                 }
+
             }
 
         } catch (err) {
